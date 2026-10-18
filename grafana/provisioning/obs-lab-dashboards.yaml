@@ -1,0 +1,10 @@
+# Provisioning dashboardów obs-lab - Grafana ładuje JSON-y z katalogu grafana/dashboards.
+apiVersion: 1
+providers:
+  - name: obs-lab
+    folder: obs-lab
+    type: file
+    allowUiUpdates: true
+    updateIntervalSeconds: 10
+    options:
+      path: /var/lib/obs-lab/dashboards

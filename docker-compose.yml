@@ -17,6 +17,10 @@ services:
     environment:
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    volumes:
+      # dashboard "obs-lab – przegląd serwisów" (folder obs-lab w Grafanie)
+      - ./grafana/provisioning/obs-lab-dashboards.yaml:/otel-lgtm/grafana/conf/provisioning/dashboards/obs-lab-dashboards.yaml:ro
+      - ./grafana/dashboards:/var/lib/obs-lab/dashboards:ro
 
   k6:
     image: grafana/k6:latest
