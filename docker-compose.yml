@@ -1,0 +1,32 @@
+# Stack observability dla zajęć.
+# grafana/otel-lgtm = OpenTelemetry Collector + Prometheus + Tempo + Loki + Grafana w jednym kontenerze,
+# z gotowymi źródłami danych i powiązaniami log <-> trace.
+#
+#   docker compose up -d lgtm          # stack
+#   docker compose --profile load run --rm k6   # generator ruchu (normalny)
+#   docker compose --profile load run --rm -e INCIDENT=true k6   # ruch z "nową kampanią" (incydent B)
+
+services:
+  lgtm:
+    image: grafana/otel-lgtm:latest
+    container_name: lgtm
+    ports:
+      - "3000:3000"   # Grafana (admin / admin)
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP - tu wysyłają aplikacje
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+
+  k6:
+    image: grafana/k6:latest
+    profiles: ["load"]
+    volumes:
+      - ./k6:/scripts:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - BASE_URL=http://host.docker.internal:8080
+      - INCIDENT=${INCIDENT:-false}
+      - DURATION=${DURATION:-30m}
+    command: run /scripts/load.js

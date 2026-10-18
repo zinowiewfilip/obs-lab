@@ -1,0 +1,38 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: inventory-service
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  # TODO(ćw. 3): ustaw sampling na 1.0 (tak samo jak w order-service)
+  # tracing:
+  #   sampling:
+  #     probability: 1.0
+  opentelemetry:
+    tracing:
+      export:
+        otlp:
+          endpoint: http://localhost:4318/v1/traces
+    logging:
+      export:
+        otlp:
+          endpoint: http://localhost:4318/v1/logs
+  otlp:
+    metrics:
+      export:
+        url: http://localhost:4318/v1/metrics
+        step: 10s
+        base-time-unit: seconds
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+  observations:
+    annotations:
+      enabled: true

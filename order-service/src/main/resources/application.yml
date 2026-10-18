@@ -1,0 +1,58 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: order-service
+  datasource:
+    url: jdbc:h2:mem:orders;DB_CLOSE_DELAY=-1
+    hikari:
+      maximum-pool-size: 5
+      connection-timeout: 3000
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: create-drop
+
+inventory:
+  base-url: http://localhost:8081
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  # --- ĆWICZENIE 3: tracing -------------------------------------------------
+  # Domyślnie Spring Boot sampluje 10% żądań. Na zajęciach chcemy 100%.
+  # TODO(ćw. 3): ustaw sampling na 1.0
+  # tracing:
+  #   sampling:
+  #     probability: 1.0
+  opentelemetry:
+    tracing:
+      export:
+        otlp:
+          endpoint: http://localhost:4318/v1/traces
+    logging:
+      export:
+        otlp:
+          endpoint: http://localhost:4318/v1/logs
+  otlp:
+    metrics:
+      export:
+        url: http://localhost:4318/v1/metrics
+        step: 10s
+        # nazwy w Prometheusie jak w klasycznym Micrometerze: *_seconds_*
+        base-time-unit: seconds
+  metrics:
+    distribution:
+      # histogram po stronie serwera -> poprawne p95/p99 w PromQL
+      percentiles-histogram:
+        http.server.requests: true
+  observations:
+    annotations:
+      enabled: true
+
+logging:
+  level:
+    pl.lab: INFO
