@@ -12,7 +12,7 @@ class Stock {
 
     static final int INITIAL = 1_000_000;
     // SKU-7 pochodzi z limitowanej dostawy
-    static final int LIMITED_SKU7 = 600;
+    static final int LIMITED_SKU7 = 120;
 
     private final Map<String, AtomicInteger> stock = new ConcurrentHashMap<>();
 
