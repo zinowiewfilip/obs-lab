@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @RestController
@@ -19,14 +18,12 @@ class InventoryController {
 
     private static final Logger log = LoggerFactory.getLogger(InventoryController.class);
 
-    private final Map<String, AtomicInteger> stock = new ConcurrentHashMap<>();
+    private final Stock stock;
     private final StockChecker stockChecker;
 
-    InventoryController(StockChecker stockChecker) {
+    InventoryController(Stock stock, StockChecker stockChecker) {
+        this.stock = stock;
         this.stockChecker = stockChecker;
-        for (int i = 1; i <= 10; i++) {
-            stock.put("SKU-" + i, new AtomicInteger(1_000_000));
-        }
     }
 
     @PostMapping("/{sku}/reserve")

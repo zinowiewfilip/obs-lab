@@ -24,10 +24,9 @@ management:
         include: health,info,metrics,prometheus
   # --- ĆWICZENIE 3: tracing -------------------------------------------------
   # Domyślnie Spring Boot sampluje 10% żądań. Na zajęciach chcemy 100%.
-  # TODO(ćw. 3): ustaw sampling na 1.0
-  # tracing:
-  #   sampling:
-  #     probability: 1.0
+  tracing:
+    sampling:
+      probability: 1.0
   opentelemetry:
     tracing:
       export:

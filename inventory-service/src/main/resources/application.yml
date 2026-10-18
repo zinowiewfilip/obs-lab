@@ -10,10 +10,9 @@ management:
     web:
       exposure:
         include: health,info,metrics,prometheus
-  # TODO(ćw. 3): ustaw sampling na 1.0 (tak samo jak w order-service)
-  # tracing:
-  #   sampling:
-  #     probability: 1.0
+  tracing:
+    sampling:
+      probability: 1.0
   opentelemetry:
     tracing:
       export:

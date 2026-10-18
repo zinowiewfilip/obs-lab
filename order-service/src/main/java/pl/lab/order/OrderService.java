@@ -1,5 +1,7 @@
 package pl.lab.order;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -16,13 +18,17 @@ class OrderService {
     private final OrderRepository orders;
     private final PromotionService promotions;
     private final InventoryClient inventory;
+    private final Counter ordersPlaced;
 
     OrderService(CustomerRepository customers, OrderRepository orders,
-                 PromotionService promotions, InventoryClient inventory) {
+                 PromotionService promotions, InventoryClient inventory, MeterRegistry registry) {
         this.customers = customers;
         this.orders = orders;
         this.promotions = promotions;
         this.inventory = inventory;
+        this.ordersPlaced = Counter.builder("orders.placed")
+                .description("Liczba złożonych zamówień")
+                .register(registry);
     }
 
     @Transactional
@@ -34,7 +40,7 @@ class OrderService {
         inventory.reserve(request.sku(), request.quantity());
 
         PurchaseOrder saved = orders.save(new PurchaseOrder(customer, request.sku(), request.quantity(), discount));
-        // TODO(ćw. 2): zlicz złożone zamówienie metryką orders.placed
+        ordersPlaced.increment();
         log.info("Order {} placed: sku={} qty={} discount={}%", saved.getId(), request.sku(), request.quantity(), discount);
         return saved;
     }

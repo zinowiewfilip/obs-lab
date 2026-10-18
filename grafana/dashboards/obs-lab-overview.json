@@ -461,7 +461,7 @@
       "gridPos": {
         "x": 0,
         "y": 13,
-        "w": 24,
+        "w": 16,
         "h": 8
       },
       "fieldConfig": {
@@ -525,9 +525,66 @@
       ]
     },
     {
+      "type": "timeseries",
+      "title": "Złożone zamówienia (orders.placed)",
+      "description": "Licznik biznesowy z OrderService.placeOrder. Spadek przy stałym ruchu = zamówienia nie przechodzą.",
+      "id": 9,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 13,
+        "w": 8,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "refId": "A",
+          "expr": "sum(rate(orders_placed_total[$__rate_interval]))",
+          "legendFormat": "zamówienia/s"
+        }
+      ]
+    },
+    {
       "type": "row",
       "title": "Zależności: order-service → inventory-service",
-      "id": 9,
+      "id": 10,
       "collapsed": false,
       "gridPos": {
         "x": 0,
@@ -541,7 +598,7 @@
       "type": "timeseries",
       "title": "Wywołania inventory-service (klient HTTP)",
       "description": "",
-      "id": 10,
+      "id": 11,
       "datasource": {
         "type": "prometheus",
         "uid": "${datasource}"
@@ -598,7 +655,7 @@
       "type": "timeseries",
       "title": "Średni czas wywołania inventory-service",
       "description": "",
-      "id": 11,
+      "id": 12,
       "datasource": {
         "type": "prometheus",
         "uid": "${datasource}"
@@ -664,7 +721,7 @@
       "type": "timeseries",
       "title": "Sprawdzenie magazynu (warehouse.check)",
       "description": "Observation @Observed na StockChecker.verifyWarehouse w inventory-service.",
-      "id": 12,
+      "id": 13,
       "datasource": {
         "type": "prometheus",
         "uid": "${datasource}"
@@ -729,7 +786,7 @@
     {
       "type": "row",
       "title": "Baza danych (HikariCP)",
-      "id": 13,
+      "id": 14,
       "collapsed": false,
       "gridPos": {
         "x": 0,
@@ -743,7 +800,7 @@
       "type": "timeseries",
       "title": "Pula połączeń",
       "description": "",
-      "id": 14,
+      "id": 15,
       "datasource": {
         "type": "prometheus",
         "uid": "${datasource}"
@@ -827,7 +884,7 @@
       "type": "timeseries",
       "title": "Czas pobrania połączenia z puli",
       "description": "",
-      "id": 15,
+      "id": 16,
       "datasource": {
         "type": "prometheus",
         "uid": "${datasource}"
@@ -901,7 +958,7 @@
     {
       "type": "row",
       "title": "JVM",
-      "id": 16,
+      "id": 17,
       "collapsed": false,
       "gridPos": {
         "x": 0,
@@ -915,7 +972,7 @@
       "type": "timeseries",
       "title": "Heap",
       "description": "",
-      "id": 17,
+      "id": 18,
       "datasource": {
         "type": "prometheus",
         "uid": "${datasource}"
@@ -981,7 +1038,7 @@
       "type": "timeseries",
       "title": "CPU procesu",
       "description": "",
-      "id": 18,
+      "id": 19,
       "datasource": {
         "type": "prometheus",
         "uid": "${datasource}"
@@ -1038,7 +1095,7 @@
       "type": "timeseries",
       "title": "Wątki i pauzy GC",
       "description": "",
-      "id": 19,
+      "id": 20,
       "datasource": {
         "type": "prometheus",
         "uid": "${datasource}"
@@ -1103,7 +1160,7 @@
     {
       "type": "row",
       "title": "Logi (Loki)",
-      "id": 20,
+      "id": 21,
       "collapsed": false,
       "gridPos": {
         "x": 0,
@@ -1116,7 +1173,7 @@
     {
       "type": "timeseries",
       "title": "Wolumen logów wg poziomu",
-      "id": 21,
+      "id": 22,
       "datasource": {
         "type": "loki",
         "uid": "${loki}"
@@ -1164,7 +1221,7 @@
     {
       "type": "logs",
       "title": "Ostrzeżenia i błędy",
-      "id": 22,
+      "id": 23,
       "datasource": {
         "type": "loki",
         "uid": "${loki}"

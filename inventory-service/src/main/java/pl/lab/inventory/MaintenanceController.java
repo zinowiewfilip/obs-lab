@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.Duration;
 import java.util.Map;
 
-/** Endpoint techniczny dla prowadzącego zajęcia - przełącza magazyn zdalny dla wybranego SKU. */
+/** Endpointy techniczne dla prowadzącego zajęcia - magazyn zdalny dla wybranego SKU i stany magazynowe. */
 @RestController
 @RequestMapping("/internal/warehouse")
 class MaintenanceController {
@@ -19,9 +19,11 @@ class MaintenanceController {
     private static final Logger log = LoggerFactory.getLogger(MaintenanceController.class);
 
     private final StockChecker stockChecker;
+    private final Stock stock;
 
-    MaintenanceController(StockChecker stockChecker) {
+    MaintenanceController(StockChecker stockChecker, Stock stock) {
         this.stockChecker = stockChecker;
+        this.stock = stock;
     }
 
     @GetMapping
@@ -35,5 +37,14 @@ class MaintenanceController {
         stockChecker.configure(sku, Duration.ofMillis(latencyMs));
         log.debug("Remote warehouse configuration changed");
         return current();
+    }
+
+    // Ręczne ustawienie stanu, np. uzupełnienie SKU-7: sku=SKU-7&quantity=1000000.
+    @PostMapping("/stock")
+    Map<String, Object> setStock(@RequestParam String sku,
+                                 @RequestParam(defaultValue = "300") int quantity) {
+        stock.set(sku, quantity);
+        log.debug("Stock level adjusted");
+        return Map.of("sku", sku, "quantity", stock.get(sku).get());
     }
 }
